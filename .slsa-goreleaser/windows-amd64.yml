@@ -7,7 +7,7 @@ flags:
   - -tags=netgo,withoutebpf
 goos: windows
 goarch: amd64
-binary: ig-extcap-{{ .Os }}-{{ .Arch }}
+binary: ig-extcap-{{ .Os }}-{{ .Arch }}.exe
 ldflags:
   - "-w"
   - "-s"
