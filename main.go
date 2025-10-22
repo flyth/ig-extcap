@@ -25,12 +25,10 @@ import (
 	"github.com/inspektor-gadget/inspektor-gadget/pkg/operators/simple"
 	"github.com/inspektor-gadget/inspektor-gadget/pkg/params"
 	grpcruntime "github.com/inspektor-gadget/inspektor-gadget/pkg/runtime/grpc"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	var interfaceName string
-	flag.StringVar(&interfaceName, "interface", "ig", "interface name")
-
 	var packetFilter string
 	flag.StringVar(&packetFilter, "extcap-capture-filter", "not port 22", "packet filter")
 
@@ -78,7 +76,7 @@ func main() {
 	flag.Parse()
 
 	if showConfig {
-		switch interfaceName {
+		switch extcapInterface {
 		case "ig":
 			fmt.Fprint(os.Stdout, "arg {number=20}{call=--remote-address}{display=Remote Address}{type=string}{default=tcp://10.211.55.12:1234}{group=Remote}\n")
 			fallthrough
@@ -90,12 +88,13 @@ func main() {
 			fmt.Fprint(os.Stdout, "arg {number=5}{call=--runtime-containername}{display=Runtime Container Name}{type=string}{group=Containers}\n")
 		}
 		fmt.Fprint(os.Stdout, "arg {number=30}{call=--gadget-image}{display=Gadget Image}{type=string}{default=tcpdump:latest}{group=Gadget}\n")
+		fmt.Fprint(os.Stdout, "arg {number=31}{call=--debug}{display=Debug}{type=boolean}{group=Gadget}\n")
 		//		fmt.Fprint(os.Stdout, "arg {number=1}{call=--snaplen}{display=Snaplen}{type=string}{default=tcpdump:latest}{group=Gadget}\n")
 		os.Exit(0)
 	}
 
 	if capture {
-		if interfaceName == "" {
+		if extcapInterface == "" {
 			os.Exit(0)
 		}
 
@@ -252,7 +251,7 @@ func main() {
 			"operator.oci.ebpf.snaplen": "65535",
 		}
 
-		switch interfaceName {
+		switch extcapInterface {
 		default:
 			fmt.Println("unsupported extcap interface")
 			os.Exit(1)
@@ -303,10 +302,19 @@ func main() {
 		}
 
 		// Run tcpdump gadget
-		l := logger.DefaultLogger()
-		l.SetLevel(logger.FatalLevel)
+		var l logger.Logger
 		if debug {
+			f, err := os.CreateTemp(os.TempDir(), "ig-extcap")
+			if err != nil {
+				panic(err)
+			}
+			l = logrus.StandardLogger()
+			logrus.SetOutput(f)
 			l.SetLevel(logger.DebugLevel)
+			l.Infof("started with arguments %v", os.Args)
+		} else {
+			l = logger.DefaultLogger()
+			l.SetLevel(logger.FatalLevel)
 		}
 
 		gadgetCtx := gadgetcontext.New(context.Background(), gadgetImage, gadgetcontext.WithLogger(l), gadgetcontext.WithDataOperators(writer))
