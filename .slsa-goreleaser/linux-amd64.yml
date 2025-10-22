@@ -7,7 +7,7 @@ flags:
   - -tags=netgo,withoutebpf
 goos: linux
 goarch: amd64
-binary: binary-{{ .Os }}-{{ .Arch }}
+binary: ig-extcap-{{ .Os }}-{{ .Arch }}
 ldflags:
   - "-w"
   - "-s"
