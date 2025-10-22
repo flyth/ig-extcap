@@ -61,6 +61,9 @@ func main() {
 	var gadgetImage string
 	flag.StringVar(&gadgetImage, "gadget-image", "tcpdump:latest", "gadget image")
 
+	var snapLen int
+	flag.IntVar(&snapLen, "snap-len", 65535, "snap length")
+
 	var k8sNamespace string
 	var k8sPodname string
 	var k8sContainername string
@@ -88,8 +91,8 @@ func main() {
 			fmt.Fprint(os.Stdout, "arg {number=5}{call=--runtime-containername}{display=Runtime Container Name}{type=string}{group=Containers}\n")
 		}
 		fmt.Fprint(os.Stdout, "arg {number=30}{call=--gadget-image}{display=Gadget Image}{type=string}{default=tcpdump:latest}{group=Gadget}\n")
-		fmt.Fprint(os.Stdout, "arg {number=31}{call=--debug}{display=Debug}{type=boolean}{group=Gadget}\n")
-		//		fmt.Fprint(os.Stdout, "arg {number=1}{call=--snaplen}{display=Snaplen}{type=string}{default=tcpdump:latest}{group=Gadget}\n")
+		fmt.Fprint(os.Stdout, "arg {number=31}{call=--snap-len}{display=SnapLen}{type=integer}{range=1,15}{default=65535}{group=Gadget}\n")
+		fmt.Fprint(os.Stdout, "arg {number=32}{call=--debug}{display=Debug}{type=boolean}{group=Gadget}\n")
 		os.Exit(0)
 	}
 
@@ -101,7 +104,7 @@ func main() {
 		var f io.WriteCloser
 		if fifo != "" {
 			var err error
-			f, err = NewFIFO(fifo)
+			f, err = os.OpenFile(fifo, os.O_WRONLY, os.ModeNamedPipe)
 			if err != nil {
 				panic(err)
 			}
@@ -248,7 +251,7 @@ func main() {
 
 		pv := api.ParamValues{
 			"operator.oci.ebpf.pf":      packetFilter,
-			"operator.oci.ebpf.snaplen": "65535",
+			"operator.oci.ebpf.snaplen": fmt.Sprintf("%d", snapLen),
 		}
 
 		switch extcapInterface {
