@@ -101,9 +101,9 @@ func main() {
 		var f io.WriteCloser
 		if fifo != "" {
 			var err error
-			f, err = os.OpenFile(fifo, os.O_APPEND|os.O_WRONLY, 0600)
+			f, err = NewFIFO(fifo)
 			if err != nil {
-				os.Exit(1)
+				panic(err)
 			}
 			defer f.Close()
 		} else {
