@@ -16,6 +16,7 @@ import (
 	"github.com/gopacket/gopacket"
 	"github.com/gopacket/gopacket/layers"
 	"github.com/gopacket/gopacket/pcapgo"
+	"github.com/inspektor-gadget/inspektor-gadget/cmd/kubectl-gadget/utils"
 	"github.com/inspektor-gadget/inspektor-gadget/pkg/datasource"
 	gadgetcontext "github.com/inspektor-gadget/inspektor-gadget/pkg/gadget-context"
 	"github.com/inspektor-gadget/inspektor-gadget/pkg/gadget-service/api"
@@ -282,6 +283,13 @@ func main() {
 			runtime = grpcruntime.New(grpcruntime.WithConnectUsingK8SProxy)
 			globalParams = runtime.GlobalParamDescs().ToParams()
 			rtParams = runtime.ParamDescs().ToParams()
+
+			config, err := utils.KubernetesConfigFlags.ToRESTConfig()
+			if err != nil {
+				panic(fmt.Errorf("Creating RESTConfig: %w", err))
+			}
+			runtime.SetRestConfig(config)
+
 			if k8sNamespace != "" {
 				pv["operator.KubeManager.k8s-namespace"] = k8sNamespace
 			}
