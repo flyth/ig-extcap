@@ -2,10 +2,9 @@ package main
 
 import (
 	"io"
-
-	"github.com/flyth/npipe"
+	"os"
 )
 
 func NewFIFO(path string) (io.WriteCloser, error) {
-	return npipe.Dial(path)
+	return os.OpenFile(path, os.O_WRONLY, os.ModeNamedPipe)
 }

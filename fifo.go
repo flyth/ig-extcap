@@ -8,5 +8,5 @@ import (
 )
 
 func NewFIFO(path string) (io.WriteCloser, error) {
-	return os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0600)
+	return os.OpenFile(path, os.O_WRONLY, os.ModeNamedPipe)
 }
