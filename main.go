@@ -91,7 +91,7 @@ func main() {
 			fmt.Fprint(os.Stdout, "arg {number=5}{call=--runtime-containername}{display=Runtime Container Name}{type=string}{group=Containers}\n")
 		}
 		fmt.Fprint(os.Stdout, "arg {number=30}{call=--gadget-image}{display=Gadget Image}{type=string}{default=tcpdump:latest}{group=Gadget}\n")
-		fmt.Fprint(os.Stdout, "arg {number=31}{call=--snap-len}{display=SnapLen}{type=integer}{range=1,15}{default=65535}{group=Gadget}\n")
+		fmt.Fprint(os.Stdout, "arg {number=31}{call=--snap-len}{display=SnapLen}{type=integer}{range=0,65535}{default=65535}{group=Gadget}\n")
 		fmt.Fprint(os.Stdout, "arg {number=32}{call=--debug}{display=Debug}{type=boolean}{group=Gadget}\n")
 		os.Exit(0)
 	}
