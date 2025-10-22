@@ -265,19 +265,19 @@ func main() {
 			globalParams.Set("remote-address", remoteAddress)
 			rtParams = runtime.ParamDescs().ToParams()
 			if k8sNamespace != "" {
-				pv["operator.LocalManageer.k8s-namespace"] = k8sNamespace
+				pv["operator.LocalManager.k8s-namespace"] = k8sNamespace
 			}
 			if k8sContainername != "" {
-				pv["operator.LocalManageer.k8s-containername"] = k8sContainername
+				pv["operator.LocalManager.k8s-containername"] = k8sContainername
 			}
 			if k8sPodname != "" {
-				pv["operator.LocalManageer.k8s-podname"] = k8sPodname
+				pv["operator.LocalManager.k8s-podname"] = k8sPodname
 			}
 			if k8sSelector != "" {
-				pv["operator.LocalManageer.k8s-selector"] = k8sSelector
+				pv["operator.LocalManager.k8s-selector"] = k8sSelector
 			}
 			if runtimeContainername != "" {
-				pv["operator.LocalManageer.runtime-containername"] = runtimeContainername
+				pv["operator.LocalManager.runtime-containername"] = runtimeContainername
 			}
 		case "ig-k8s":
 			runtime = grpcruntime.New(grpcruntime.WithConnectUsingK8SProxy)
