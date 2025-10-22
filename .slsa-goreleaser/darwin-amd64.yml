@@ -1,0 +1,13 @@
+version: 1
+env:
+  - GO111MODULE=on
+  - CGO_ENABLED=0
+flags:
+  - -trimpath
+  - -tags=netgo,withoutebpf
+goos: darwin
+goarch: amd64
+binary: binary-{{ .Os }}-{{ .Arch }}
+ldflags:
+  - "-w"
+  - "-s"
