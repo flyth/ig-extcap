@@ -136,6 +136,8 @@ func main() {
 				return fmt.Errorf("length field not found")
 			}
 
+			procCommField := ds.GetField("proc.comm")
+
 			// TODO:
 			// Currently, each data packet carries all interface/enriched information with the payload;
 			// optimally, we would create a special datasource for it and cache the sent information both
@@ -228,12 +230,19 @@ func main() {
 					pcapInterface = newIndex
 				}
 
-				err = wr.WritePacket(gopacket.CaptureInfo{
+				options := pcapgo.NgPacketOptions{}
+
+				if procCommField != nil {
+					comm, _ := procCommField.String(data)
+					options.Comments = append(options.Comments, "proc.comm="+comm)
+				}
+
+				err = wr.WritePacketWithOptions(gopacket.CaptureInfo{
 					Timestamp:      time.Unix(0, int64(time.Duration(ts)*time.Microsecond)),
 					InterfaceIndex: pcapInterface,
 					CaptureLength:  len(payload),
 					Length:         int(length),
-				}, payload)
+				}, payload, options)
 				if err != nil {
 					gadgetCtx.Logger().Warnf("failed to write packet: %v", err)
 					return nil
